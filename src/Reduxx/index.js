@@ -1,12 +1,15 @@
 // @flow
 
 import { combineReducers } from 'redux'
+import { reducer as formReducer } from 'redux-form'
+
 import configureStore from './CreateStore'
 
 const createStore = () => {
   /* ------------- Assemble The Reducers ------------- */
   const rootReducer = combineReducers({
-    login: require('./LoginRedux').reducer
+    login: require('./LoginRedux').reducer,
+    form: formReducer
   })
 
   return configureStore(rootReducer)
