@@ -1,0 +1,15 @@
+[ignore]
+.*/node_modules/findup/.*
+.*/node_modules/protobufjs/.*
+
+[include]
+
+[libs]
+
+[lints]
+
+[options]
+module.name_mapper='^Components\(.*\)$' -> '<PROJECT_ROOT>/src/Components/\1'
+module.name_mapper='^Screens\(.*\)$' -> '<PROJECT_ROOT>/src/Screens/\1'
+module.name_mapper='^Routes\(.*\)$' -> '<PROJECT_ROOT>/src/Routes/\1'
+module.name_mapper='^Layouts\(.*\)$' -> '<PROJECT_ROOT>/src/Layouts/\1'
