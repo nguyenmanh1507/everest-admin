@@ -6,7 +6,7 @@ import { Field, FieldArray, reduxForm } from 'redux-form'
 import AddProductColorsForm from './AddProductColorsForm'
 
 type Props = {
-  handleSubmit: () => void
+  handleSubmit: () => void,
 }
 
 class AddProductsForm extends React.Component<Props> {

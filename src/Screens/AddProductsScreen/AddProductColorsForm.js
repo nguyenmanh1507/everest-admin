@@ -4,12 +4,13 @@ import React, { Component, Fragment } from 'react'
 import Dropzone from 'react-dropzone'
 import { connect } from 'react-redux'
 import { Field, FieldArray } from 'redux-form'
-import { kebabCase, uniqueId } from 'lodash'
+import { kebabCase } from 'lodash'
 import uuidv1 from 'uuid/v1'
 
 // import type { FieldArrayProps } from 'redux-form'
 
 import AddProductSizesForm from './AddProductSizesForm'
+import AddProductPhotos from './AddProductPhotos'
 import { storage } from 'FirebaseConfig'
 
 const colorCodeNames = [
@@ -42,28 +43,46 @@ type Props = {
   addProductsValues: Object
 }
 
-class AddProductColors extends Component<Props> {  
+type State = {
+  photoURLs: Array<string>
+}
+
+class AddProductColors extends Component<Props, State> {
+  state = {
+    photoURLs: []
+  }
+
+  shortUid = uuidv1().slice(0, 5)
+
   componentDidMount() {
     this.props.fields.push({})
-    this.colorIndex = 
   }
 
   uploadPhotos = (accepted: any, rejected: any) => {
-    const productName = this.props.addProductsValues.name
+    const { addProductsValues: { name: productName } } = this.props
     const productPhotosRef = storage.ref(
-      `products/${kebabCase(productName)}-${uniqueId()}/colorName`
+      `products/${kebabCase(productName)}-${this.shortUid}/colorName`
     )
 
-    console.log(this.props)
-
-    // accepted.forEach(file => {
-    //   productPhotosRef
-    //     .child(uuidv1())
-    //     .put(file)
-    //     .then(snapshot => {
-    //       console.log('Uploaded a blob or file!', snapshot)
-    //     })
-    // })
+    Promise.all(
+      accepted.map(file => {
+        return productPhotosRef
+          .child(uuidv1())
+          .put(file)
+          .then(snapshot => {
+            console.log('Uploaded a blob or file!', snapshot.downloadURL)
+            return snapshot.downloadURL
+          })
+          .catch(error => {
+            throw Error(error)
+          })
+      })
+    ).then(responses => {
+      console.log('set state', responses)
+      this.setState(prevState => ({
+        photoURLs: [...prevState.photoURLs, ...responses]
+      }))
+    })
   }
 
   logData(accepted: any, rejected: any) {
@@ -71,6 +90,7 @@ class AddProductColors extends Component<Props> {
   }
 
   render() {
+    const { photoURLs } = this.state
     const { fields } = this.props
 
     return (
@@ -115,13 +135,12 @@ class AddProductColors extends Component<Props> {
                   accept="image/jpeg, image/png"
                   onDrop={this.uploadPhotos}
                 />
-                {/* <Field
-                  name="photos"
-                  type="file"
-                  component="input"
-                  className="form-control"
-                  id="photos"
-                /> */}
+
+                <FieldArray
+                  name={`${color}.photos`}
+                  component={AddProductPhotos}
+                  props={{ photoURLs }}
+                />
               </div>
 
               <FieldArray
