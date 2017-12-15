@@ -5,6 +5,7 @@
 [include]
 
 [libs]
+flow-typed
 
 [lints]
 
@@ -14,3 +15,5 @@ module.name_mapper='^Screens\(.*\)$' -> '<PROJECT_ROOT>/src/Screens/\1'
 module.name_mapper='^Routes\(.*\)$' -> '<PROJECT_ROOT>/src/Routes/\1'
 module.name_mapper='^Layouts\(.*\)$' -> '<PROJECT_ROOT>/src/Layouts/\1'
 module.name_mapper='^FirebaseConfig\(.*\)$' -> '<PROJECT_ROOT>/src/FirebaseConfig/\1'
+module.name_mapper='^Reduxx\(.*\)$' -> '<PROJECT_ROOT>/src/Reduxx/\1'
+module.name_mapper='^Utils\(.*\)$' -> '<PROJECT_ROOT>/src/Utils/\1'

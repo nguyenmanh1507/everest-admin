@@ -2,14 +2,18 @@
 
 import * as React from 'react'
 import { Field, FieldArray, reduxForm } from 'redux-form'
+import uuidv1 from 'uuid/v1'
 
 import AddProductColorsForm from './AddProductColorsForm'
+import { convertStringToNumber } from 'Utils/ReduxForm'
 
 type Props = {
-  handleSubmit: () => void,
+  handleSubmit: () => void
 }
 
 class AddProductsForm extends React.Component<Props> {
+  shortUid = uuidv1().slice(0, 5)
+
   render() {
     const { handleSubmit } = this.props
 
@@ -62,6 +66,7 @@ class AddProductsForm extends React.Component<Props> {
                         component="input"
                         className="form-control"
                         id="price"
+                        parse={convertStringToNumber}
                       />
                     </div>
                   </div>
@@ -74,6 +79,7 @@ class AddProductsForm extends React.Component<Props> {
                         component="input"
                         className="form-control"
                         id="sale-percent"
+                        parse={convertStringToNumber}
                       />
                     </div>
                   </div>
@@ -137,7 +143,11 @@ class AddProductsForm extends React.Component<Props> {
             </div>
           </div>
           <div className="col-sm-6">
-            <FieldArray name="colors" component={AddProductColorsForm} />
+            <FieldArray
+              name="colors"
+              component={AddProductColorsForm}
+              props={{ shortUid: this.shortUid }}
+            />
           </div>
         </div>
 

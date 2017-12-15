@@ -2,16 +2,16 @@ import firebase from 'firebase'
 import 'firebase/firestore'
 import 'firebase/storage'
 
-const config = {
-  apiKey: 'AIzaSyBI7NDf3ehVHeuB4L50a0PwriFSpdWAPkw',
-  authDomain: 'everest-shop.firebaseapp.com',
-  databaseURL: 'https://everest-shop.firebaseio.com',
-  projectId: 'everest-shop',
-  storageBucket: 'everest-shop.appspot.com',
-  messagingSenderId: '675338110681'
-}
+import config from './config'
 
-firebase.initializeApp(config)
+firebase.initializeApp({
+  apiKey: config.apiKey,
+  authDomain: `${config.projectId}.firebaseapp.com`,
+  databaseURL: `https://${config.databaseName}.firebaseio.com`,
+  projectId: config.projectId,
+  storageBucket: `${config.bucket}.appspot.com`,
+  messagingSenderId: config.messagingSenderId
+})
 
 export const storage = firebase.storage()
 export const db = firebase.firestore()

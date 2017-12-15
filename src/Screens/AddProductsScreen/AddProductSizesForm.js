@@ -3,6 +3,8 @@
 import React, { Component, Fragment } from 'react'
 import { Field } from 'redux-form'
 
+import { convertStringToNumber } from 'Utils/ReduxForm'
+
 type Props = {
   fields: any
 }
@@ -47,6 +49,7 @@ class AddProductSizesForm extends Component<Props> {
                       component="input"
                       className="form-control"
                       id={`${size}.quantity`}
+                      parse={convertStringToNumber}
                     />
                   </div>
                 </div>

@@ -1,17 +1,11 @@
 // @flow
 
 import React, { Component, Fragment } from 'react'
-import Dropzone from 'react-dropzone'
 import { connect } from 'react-redux'
 import { Field, FieldArray } from 'redux-form'
-import { kebabCase } from 'lodash'
-import uuidv1 from 'uuid/v1'
-
-// import type { FieldArrayProps } from 'redux-form'
 
 import AddProductSizesForm from './AddProductSizesForm'
-import AddProductPhotos from './AddProductPhotos'
-import { storage } from 'FirebaseConfig'
+import UploadPhotos from './UploadPhotos'
 
 const colorCodeNames = [
   'red',
@@ -40,58 +34,35 @@ type Props = {
   // ISSUE: redux form flow error
   // fields: FieldArrayProps
   fields: any,
-  addProductsValues: Object
+  addProductsValues: Object,
+  shortUid: string
 }
 
 type State = {
-  photoURLs: Array<string>
+  selectedColor: string
 }
 
 class AddProductColors extends Component<Props, State> {
   state = {
-    photoURLs: []
+    selectedColor: ''
   }
-
-  shortUid = uuidv1().slice(0, 5)
 
   componentDidMount() {
     this.props.fields.push({})
-  }
-
-  uploadPhotos = (accepted: any, rejected: any) => {
-    const { addProductsValues: { name: productName } } = this.props
-    const productPhotosRef = storage.ref(
-      `products/${kebabCase(productName)}-${this.shortUid}/colorName`
-    )
-
-    Promise.all(
-      accepted.map(file => {
-        return productPhotosRef
-          .child(uuidv1())
-          .put(file)
-          .then(snapshot => {
-            console.log('Uploaded a blob or file!', snapshot.downloadURL)
-            return snapshot.downloadURL
-          })
-          .catch(error => {
-            throw Error(error)
-          })
-      })
-    ).then(responses => {
-      console.log('set state', responses)
-      this.setState(prevState => ({
-        photoURLs: [...prevState.photoURLs, ...responses]
-      }))
-    })
   }
 
   logData(accepted: any, rejected: any) {
     console.log(accepted)
   }
 
+  setSelectedColor = (e: any) => {
+    this.setState({
+      selectedColor: e.currentTarget.value
+    })
+  }
+
   render() {
-    const { photoURLs } = this.state
-    const { fields } = this.props
+    const { fields, addProductsValues, shortUid } = this.props
 
     return (
       <Fragment>
@@ -119,6 +90,7 @@ class AddProductColors extends Component<Props, State> {
                   component="select"
                   className="form-control"
                   id={`${color}.colorName`}
+                  onChange={this.setSelectedColor}
                 >
                   <option hidden />
                   {colorCodeNames.map(c => (
@@ -131,15 +103,14 @@ class AddProductColors extends Component<Props, State> {
 
               <div className="form-group">
                 <label htmlFor="photos">Upload photos</label>
-                <Dropzone
-                  accept="image/jpeg, image/png"
-                  onDrop={this.uploadPhotos}
-                />
-
-                <FieldArray
+                <Field
                   name={`${color}.photos`}
-                  component={AddProductPhotos}
-                  props={{ photoURLs }}
+                  component={UploadPhotos}
+                  props={{
+                    addProductsValues,
+                    shortUid,
+                    colorName: this.state.selectedColor
+                  }}
                 />
               </div>
 
