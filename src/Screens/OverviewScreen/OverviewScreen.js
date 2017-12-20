@@ -1,80 +1,20 @@
 // @flow
 
 import React, { Component, Fragment } from 'react'
-import { truncate, filter } from 'lodash'
+import { truncate } from 'lodash'
 import moment from 'moment'
 
-import { db } from 'FirebaseConfig'
-
-type State = {
-  data: Array<Object>
+type Props = {
+  products: {
+    data: Array<Object>,
+    error: ?Object,
+    fetching: boolean
+  }
 }
 
-class OverviewScreen extends Component<{}, State> {
-  state = {
-    data: []
-  }
-
-  unsubscribeDataChange = null
-
-  getProducts = () => {
-    this.unsubscribeDataChange = db
-      .collection('products')
-      .orderBy('timestamp', 'asc')
-      .onSnapshot(
-        snapshot => {
-          if (!snapshot.metadata.hasPendingWrites) {
-            let newData = []
-
-            snapshot.docChanges.forEach(change => {
-              if (change.type === 'added') {
-                newData = [
-                  { id: change.doc.id, ...change.doc.data() },
-                  ...newData
-                ]
-              }
-
-              if (change.type === 'modified') {
-                newData = this.state.data.map(d => {
-                  if (d.id === change.doc.id) {
-                    return {
-                      id: change.doc.id,
-                      ...change.doc.data()
-                    }
-                  }
-
-                  return d
-                })
-              }
-
-              if (change.type === 'removed') {
-                newData = filter(this.state.data, d => d.id !== change.doc.id)
-              }
-            })
-            this.setState(({ data }) => ({
-              data: [...newData]
-            }))
-          }
-        },
-        error => {
-          throw Error(`Get products error: ${error}`)
-        }
-      )
-  }
-
-  componentDidMount() {
-    this.getProducts()
-  }
-
-  componentWillUnmount() {
-    if (this.unsubscribeDataChange) {
-      this.unsubscribeDataChange()
-      console.log('unscrible data change')
-    }
-  }
-
+class OverviewScreen extends Component<Props> {
   render() {
-    const { data } = this.state
+    const { products: { data, fetching } } = this.props
 
     return (
       <Fragment>
@@ -101,6 +41,13 @@ class OverviewScreen extends Component<{}, State> {
                 <td>{moment(d.timestamp).fromNow()}</td>
               </tr>
             ))}
+            {fetching && (
+              <tr>
+                <td colSpan="5" className="text-center text-primary">
+                  <i className="fa fa-spinner fa-pulse fa-3x" />
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </Fragment>
