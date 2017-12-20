@@ -143,11 +143,11 @@ class AddProductsForm extends React.Component<Props> {
             </div>
           </div>
           <div className="col-sm-6">
-            <FieldArray
+             <FieldArray
               name="colors"
               component={AddProductColorsForm}
               props={{ shortUid: this.shortUid }}
-            />
+            /> 
           </div>
         </div>
 

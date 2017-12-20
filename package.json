@@ -8,6 +8,7 @@
     "faker": "^4.1.0",
     "firebase": "^4.8.0",
     "lodash": "^4.17.4",
+    "moment": "^2.20.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-dropzone": "^4.2.3",
@@ -16,6 +17,7 @@
     "react-scripts": "1.0.17",
     "redux": "^3.7.2",
     "redux-form": "^7.2.0",
+    "redux-saga": "^0.16.0",
     "reduxsauce": "^0.7.0",
     "seamless-immutable": "^7.1.2",
     "uuid": "^3.1.0"
