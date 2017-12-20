@@ -4,12 +4,12 @@ import Immutable from 'seamless-immutable'
 /* ------------- Types and Action Creators ------------- */
 
 const { Types, Creators } = createActions({
-  fetchProductsRequest: null,
-  fetchProductsSuccess: ['data'],
-  fetchProductsFailure: ['error']
+  uploadPhotoRequest: ['photo'],
+  uploadPhotoSuccess: ['data'],
+  uploadPhotoFailure: ['error']
 })
 
-export const productsType = Types
+export const photosType = Types
 export default Creators
 
 /* ------------- Initial State ------------- */
@@ -17,33 +17,33 @@ export default Creators
 export const INITIAL_STATE = Immutable({
   data: [],
   error: null,
-  fetching: false
+  uploading: false
 })
 
 /* ------------- Reducers ------------- */
 
-// we've attemping to get all products
-export const request = state => state.merge({ fetching: true })
+// we've attemping to upload photos
+export const request = state => state.merge({ uploading: true })
 
-// we've successfully get all products
+// we've successfully upload photos
 export const success = (state, { data }) =>
   state.merge({
-    fetching: false,
-    error: null,
-    data
+    data,
+    uploading: false,
+    error: null
   })
 
-// we've had a problem get all products
+// we've had a problem upload photos
 export const failure = (state, { error }) =>
   state.merge({
-    fetching: false,
+    uploading: false,
     error
   })
 
 /* ------------- Hookup Reducers To Types ------------- */
 
 export const reducer = createReducer(INITIAL_STATE, {
-  [Types.FETCH_PRODUCTS_REQUEST]: request,
-  [Types.FETCH_PRODUCTS_SUCCESS]: success,
-  [Types.FETCH_PRODUCTS_FAILURE]: failure
+  [Types.UPLOAD_PHOTOS_REQUEST]: request,
+  [Types.UPLOAD_PHOTOS_SUCCESS]: success,
+  [Types.UPLOAD_PHOTOS_FAILURE]: failure
 })

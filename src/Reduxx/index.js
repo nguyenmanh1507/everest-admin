@@ -10,6 +10,8 @@ const createStore = () => {
   const rootReducer = combineReducers({
     login: require('./LoginRedux').reducer,
     products: require('./productsRedux').reducer,
+    product: require('./productRedux').reducer,
+    photos: require('./photosRedux').reducer,
     form: formReducer
   })
 
