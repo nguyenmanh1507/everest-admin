@@ -1,55 +1,59 @@
 // @flow
 
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import Dropzone from 'react-dropzone'
-import { kebabCase } from 'lodash'
-import uuidv1 from 'uuid/v1'
+import { kebabCase, isEqual } from 'lodash'
 
-import { storage } from 'FirebaseConfig'
+import Creators from 'Reduxx/photosRedux'
 
 type Props = {
   input: Object,
   addProductsValues: Object,
   shortUid: string,
-  colorName: string
+  colorName: string,
+  uploadPhotosRequest: (
+    photos: Array<any>,
+    dir: string,
+    colorName: string
+  ) => void,
+  photos: {
+    uploading: boolean,
+    error: Object,
+    colors: Object
+  }
 }
 
 class UploadPhotos extends Component<Props> {
-  photoURLs: Array<{ url: string }>
-
-  photoURLs = []
+  colorPhotos: Array<{ url: string }>
+  colorPhotos = []
 
   uploadPhotos = (accepted: any, rejected: any) => {
     const {
-      input,
       addProductsValues: { name: productName },
       shortUid,
       colorName
     } = this.props
-    const productPhotosRef = storage.ref(
-      `products/${kebabCase(productName)}-${shortUid}/${colorName}`
-    )
 
-    Promise.all(
-      accepted.map(file => {
-        return productPhotosRef
-          .child(uuidv1())
-          .put(file)
-          .then(snapshot => {
-            return snapshot.downloadURL
-          })
-          .catch(error => {
-            throw Error(error)
-          })
-      })
-    ).then(responses => {
-      const newPhoto = responses.map(res => ({
-        url: res
+    const dir = `${kebabCase(productName)}-${shortUid}/${colorName}`
+
+    this.props.uploadPhotosRequest(accepted, dir, colorName)
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { colorName, input, photos: oldPhotos } = this.props
+    const { photos: newPhotos } = nextProps
+
+    if (
+      newPhotos.colors[colorName] &&
+      !isEqual(oldPhotos.colors[colorName], newPhotos.colors[colorName])
+    ) {
+      console.log('upload photo', colorName)
+      const colorPhotos = newPhotos.colors[colorName].map(url => ({
+        url
       }))
-
-      this.photoURLs = [...this.photoURLs, ...newPhoto]
-      input.onChange(this.photoURLs)
-    })
+      input.onChange(colorPhotos)
+    }
   }
 
   render() {
@@ -59,4 +63,13 @@ class UploadPhotos extends Component<Props> {
   }
 }
 
-export default UploadPhotos
+const mapStateToProps = ({ photos }) => ({
+  photos
+})
+
+const mapDispatchToProps = dispatch => ({
+  uploadPhotosRequest: (photos, dir, colorName) =>
+    dispatch(Creators.uploadPhotosRequest(photos, dir, colorName))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(UploadPhotos)

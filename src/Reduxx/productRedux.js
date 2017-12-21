@@ -15,28 +15,27 @@ export default Creators
 /* ------------- Initial State ------------- */
 
 export const INITIAL_STATE = Immutable({
-  data: [],
   error: null,
-  fetching: false
+  submiting: false
 })
 
 /* ------------- Reducers ------------- */
 
 // we've attemping to create product
-export const request = state => state.merge({ fetching: true })
+export const request = state => state.merge({ submiting: true })
 
 // we've successfully create product
 export const success = state =>
   state.merge({
-    fetching: false,
-    error: null
+    error: null,
+    submiting: false
   })
 
 // we've had a problem create product
 export const failure = (state, { error }) =>
   state.merge({
-    fetching: false,
-    error
+    error,
+    submiting: false
   })
 
 /* ------------- Hookup Reducers To Types ------------- */

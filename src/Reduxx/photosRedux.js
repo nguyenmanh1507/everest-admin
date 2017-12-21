@@ -4,9 +4,9 @@ import Immutable from 'seamless-immutable'
 /* ------------- Types and Action Creators ------------- */
 
 const { Types, Creators } = createActions({
-  uploadPhotoRequest: ['photo'],
-  uploadPhotoSuccess: ['data'],
-  uploadPhotoFailure: ['error']
+  uploadPhotosRequest: ['photos', 'dir', 'colorName'],
+  uploadPhotosSuccess: ['downloadUrl', 'colorName'],
+  uploadPhotosFailure: ['error']
 })
 
 export const photosType = Types
@@ -15,9 +15,9 @@ export default Creators
 /* ------------- Initial State ------------- */
 
 export const INITIAL_STATE = Immutable({
-  data: [],
   error: null,
-  uploading: false
+  uploading: false,
+  colors: {}
 })
 
 /* ------------- Reducers ------------- */
@@ -26,12 +26,18 @@ export const INITIAL_STATE = Immutable({
 export const request = state => state.merge({ uploading: true })
 
 // we've successfully upload photos
-export const success = (state, { data }) =>
-  state.merge({
-    data,
+export const success = (state, { downloadUrl, colorName }) => {
+  const oldData = state.colors[colorName] ? state.colors[colorName] : []
+
+  return state.merge({
+    colors: {
+      ...state.colors,
+      [colorName]: [...oldData, ...downloadUrl]
+    },
     uploading: false,
     error: null
   })
+}
 
 // we've had a problem upload photos
 export const failure = (state, { error }) =>
