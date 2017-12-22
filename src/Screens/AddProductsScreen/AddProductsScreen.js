@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 
 import AddProductsFom from './AddProductsFom'
 import Creators from 'Reduxx/productRedux'
+import ImportSampleDataButton from './ImportSampleDataButton'
 
 type Props = {
   createProductRequest: (data: Object) => void
@@ -19,6 +20,7 @@ class AddProductsScreen extends Component<Props> {
     return (
       <Fragment>
         <h1>Add Products</h1>
+        <ImportSampleDataButton />
         <AddProductsFom onSubmit={this.createProduct} />
       </Fragment>
     )
